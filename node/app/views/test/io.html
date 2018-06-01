@@ -1,0 +1,73 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Web sockets test</title>
+   <script src="http://localhost:3001/socket.io/socket.io.js"></script>
+</head>
+<body>
+    <!-- <button id="send">发送消息到服务器</button> -->
+    <div>
+        <div>
+            <form method="POST" enctype="multipart/form-data">
+                <input type="file" name="upfile" id='upfile'/>
+            </form>
+            <input type="submit" name="button" value="上传" id="send"/>
+
+        </div>
+        <p>服务器返回的消息是：</p>
+        <i id="msg"></i>
+    </div>
+    <script src='/public/static/js/jquery-2.1.1.js'></script>
+    <script>
+        window.onload = function() {
+            var send = document.querySelector("#send");
+            var msg = document.querySelector("#msg");
+            try {
+                var socket = io("ws://localhost:3001"); //初始化websocket，连接服务端
+                var socketId = false;
+                socket.on('connect', () => {
+                    socketId = socket.id;
+                })
+
+                socket.on("getMsg",  (data) => {
+                    console.log("服务端发送的消息是：", data);
+                    msg.innerHTML = `${data.notes || '开始上传'}` ;
+                })
+
+                send.onclick =  () => {
+                    console.log("点击了发送消息！");
+                    upfile()
+                }
+
+                function upfile () {
+                    var fileOpt = document.querySelector("#upfile");
+
+                    var fd = new FormData();
+                    fd.append('fileOpt', fileOpt.files[0]); 
+                    fd.append('socketID', socketId); 
+
+                    $.ajax({
+                        url: '/test/uploadtest',
+                        type: 'POST',
+                        dataType: 'json',
+                        async: true,
+                        data: fd,
+                        processData: false,
+                        contentType: false,
+                        success: (data) => {
+                            console.log('succe:', data);
+                            // msg.innerHTML = '上传成功';
+                        },
+                        error: (error) => {
+                            console.log('error:', error);
+                        }
+                    })
+                }
+            } catch (err) {
+                alert(err);
+                console.log('err:', err);
+            }
+        }
+    </script>
+</body>
+</html>

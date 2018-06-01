@@ -1,0 +1,39 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Web sockets test</title>
+   <!-- <script src="/socket.io/socket.io.js"></script> -->
+</head>
+<body>
+    <button id="send">发送消息到服务器</button>
+    <div>
+        <p>服务器返回的消息是：</p>
+        <i id="msg"></i>
+    </div>
+    <script>
+        var wss = new WebSocket("ws://localhost:8081"); //初始化websocket，连接服务端
+        console.log(wss);
+        var send = document.querySelector("#send"),
+            msg = document.querySelector("#msg");
+        send.onclick = function () {
+            console.log("点击了发送消息！");
+            wss.send("connection send hello")
+        }
+        // socket.on("getMsg", function (data) {
+        //     console.log("服务端发送的消息是：", data);
+        //     msg.innerHTML += data + '<br/>';
+        // })
+
+            wss.onopen = () => {
+                wss.send("send hello")
+            }
+            wss.onmessage = event => {
+                console.log("服务端发送的消息是：", event);
+                msg.innerHTML += event + '<br/>';
+            }
+            // wss.onerror = (event) => {
+            //     console.log('error:', event);
+            // }
+    </script>
+</body>
+</html>
