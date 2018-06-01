@@ -1,7 +1,7 @@
 #   MVC 模式后端框架
 
 ## 框架应用：cookie、session、email、fs、socketIo、mysql等插件 ;
-## 封装有内置：mssql数据库操作，事务模式、session,cookie读写、多文件上传，上传进度同步、即时通讯、controller权限操作控制等功能；可扩展
+## 封装有内置：mssql数据库操作，事务模式、session,cookie读写、多文件上传，上传进度同步、邮件发送、即时通讯、controller权限操作控制等功能；可扩展
 
 ##  项目结构
 ### ┏ ┳ ┓┣ ╋ ┫┗ ┻ ┛┃━
