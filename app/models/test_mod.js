@@ -1,4 +1,5 @@
-const DBMySql = require('../../system/database/DB-mysql');
+// const DBMySql = require('../../system/database/DB-mysql');
+const DBMySql = require('../../system/database/DB_mysql-2.0');
 
 class test_role extends DBMySql {
     constructor () {
@@ -6,7 +7,7 @@ class test_role extends DBMySql {
     }
 
     async transTest () {
-        let Transaction = await this.allowTransaction();
+        await this.TransBegin();
         
         try {
 
@@ -37,11 +38,9 @@ class test_role extends DBMySql {
                 role_name: `roleName${idi}`,
             });
             console.log(`res : ${idi} ==> `, res);
-
-            this.transEnd('commit');
+            this.TransEnd('commit');
         } catch (e) {
-            console.log('rollback error:', e)
-            this.transEnd('rollback');
+            this.TransEnd('rollback');
         }
     }
 }

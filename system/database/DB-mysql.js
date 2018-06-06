@@ -123,7 +123,7 @@ class DB_Mysql {
      * @function allowTransaction
      * @desc 开始事务模式
      */
-    async allowTransaction () {
+    async TransBegin () {
         this.isTransaction = true;
         this.transParams = await new Promise((resolve, reject) => {
             this.Pool.getConnection((err, connection) => {
@@ -143,7 +143,7 @@ class DB_Mysql {
      * @desc 事务提交、结束事务、回收状态
      * @param {String} action 
      */
-    transEnd (action) {
+    TransEnd (action) {
         switch (action.toLowerCase()) {
             case 'commit':
                 this.transParams.commit();
