@@ -287,23 +287,44 @@ class Upload {
                 resolve(fsRWriteInfo); // reject(fsRWriteInfo);
             }
 
-            let progressSet = setInterval(function progress() {
-                if (chunkOut) passedLength = totalSize;
-                let percent = Math.ceil((passedLength / totalSize) * 100);  
-                let size = Math.ceil(passedLength / 1000000);  
-                let diff = size - lastSize;  
-                lastSize = size; 
+            
+            /**
+             * @desc 因后一个间歇调用可能会在前一个间歇调用结束之前启动； JavaScript高级程序设计(第三版)建议，使用超时调用（setTimeout）来模拟间歇调用（setInterval）的是一种最佳模式
+             */
+            // let progressSet = setInterval(function progress() {
+            //     if (chunkOut) passedLength = totalSize;
+            //     let percent = Math.ceil((passedLength / totalSize) * 100);  
+            //     let size = Math.ceil(passedLength / 1000000);  
+            //     let diff = size - lastSize;  
+            //     lastSize = size; 
     
-                // console.log(totalSize, `已完成${size}MB, ${percent}%, 速度：${diff * 2}MB/s`);
+            //     // console.log(totalSize, `已完成${size}MB, ${percent}%, 速度：${diff * 2}MB/s`);
+            //     io.emit("progress", {socketID: socketID, progress: {size: size, percent: percent, diff: diff}, notes: `已完成${size}MB, ${percent}%, 速度：${diff * 2}MB/s`});
+            //     if (chunkOut || passedLength >= totalSize || percent >= 100) { // passedLength 读取差异可能导致 passedLength <=> totalSize
+            //         let endTime = Date.now();  
+            //         console.log('共用时：' + (endTime - startTime) / 1000 + '秒。');  
+            //         clearInterval(progressSet);
+            //         setTimeout(() => {ws.end()}, 110)
+            //     }
+            // }, 100)
+
+            setTimeout(function progressSet () {
+                if (chunkOut) passedLength = totalSize;
+                let percent = Math.ceil((passedLength / totalSize) * 100);
+                let size = Math.ceil(passedLength / 1000000);
+                let diff = size - lastSize;
+                lastSize = size;
+                
                 io.emit("progress", {socketID: socketID, progress: {size: size, percent: percent, diff: diff}, notes: `已完成${size}MB, ${percent}%, 速度：${diff * 2}MB/s`});
                 if (chunkOut || passedLength >= totalSize || percent >= 100) { // passedLength 读取差异可能导致 passedLength <=> totalSize
-                    let endTime = Date.now();  
-                    console.log('共用时：' + (endTime - startTime) / 1000 + '秒。');  
-                    clearInterval(progressSet);
+                    let endTime = Date.now();
+                    console.log('共用时：' + (endTime - startTime) / 1000 + '秒。');
                     setTimeout(() => {ws.end()}, 110)
+                } else {
+                    setTimeout(progressSet, 100)
                 }
             }, 100)
-
+                    
         })
     }
 }
